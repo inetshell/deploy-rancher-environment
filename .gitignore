@@ -1,3 +1,4 @@
 ansible/*.retry
 secrets/
+secrets/ssh/
 vars/
