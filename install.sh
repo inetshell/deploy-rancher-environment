@@ -18,28 +18,26 @@ function install_requirements() {
 }
 
 function define_vars() {
-    echo "Please define the environment variables:"
+    echo "Please define the environment variables, Press ENTER for default:"
 
-    echo -n -e "\e[32mCERTBOT_EMAIL\e[0m="; read CERTBOT_EMAIL
+    echo -n -e "\e[32mCERTBOT_EMAIL\e[0m[No default]:"; read CERTBOT_EMAIL
     if [[ -z ${CERTBOT_EMAIL} ]]; then
-        error "Error while reading variables"
+        error "CERTBOT_EMAIL must be defined"
     fi
 
-    echo -n -e "\e[32mTIMEZONE\e[0m[UTC]="; read TIMEZONE
-    if [[ -z ${TIMEZONE} ]]; then
-        echo -n "UTC"
-        TIMEZONE="UTC"
-    fi
-
-    echo -n -e "\e[32mRANCHER_DNS\e[0m="; read RANCHER_DNS
+    echo -n -e "\e[32mRANCHER_DNS\e[0m[No default]:"; read RANCHER_DNS
     if [[ -z ${RANCHER_DNS} ]]; then
-        error "Error while reading variables"
+        error "RANCHER_DNS must be defined"
     fi
 
-    echo -n -e "\e[32mRANCHER_VERSION\e[0m[stable]="; read RANCHER_VERSION
+    echo -n -e "\e[32mRANCHER_VERSION\e[0m[stable]:"; read RANCHER_VERSION
     if [[ -z ${RANCHER_VERSION} ]]; then
-        echo -n "stable"
         RANCHER_VERSION="stable"
+    fi
+
+    echo -n -e "\e[32mTIMEZONE\e[0m[UTC]:"; read TIMEZONE
+    if [[ -z ${TIMEZONE} ]]; then
+        TIMEZONE="UTC"
     fi
 }
 
@@ -47,9 +45,9 @@ function write_vars_file() {
 cat > "${VARS_FILE}" <<-EOM
 #!/bin/sh
 export CERTBOT_EMAIL="${CERTBOT_EMAIL}"
-export TIMEZONE="${TIMEZONE}"
 export RANCHER_DNS="${RANCHER_DNS}"
 export RANCHER_VERSION="${RANCHER_VERSION}"
+export TIMEZONE="${TIMEZONE}"
 EOM
 }
 
