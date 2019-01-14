@@ -25,9 +25,10 @@ function define_vars() {
         error "Error while reading variables"
     fi
 
-    echo -n -e "\e[32mCTIMEZONE\e[0m="; read TIMEZONE
+    echo -n -e "\e[32mTIMEZONE\e[0m[UTC]="; read TIMEZONE
     if [[ -z ${TIMEZONE} ]]; then
-        error "Error while reading variables"
+        echo -n "UTC"
+        TIMEZONE="UTC"
     fi
 
     echo -n -e "\e[32mRANCHER_DNS\e[0m="; read RANCHER_DNS
@@ -35,9 +36,10 @@ function define_vars() {
         error "Error while reading variables"
     fi
 
-    echo -n -e "\e[32mRANCHER_VERSION\e[0m="; read RANCHER_VERSION
+    echo -n -e "\e[32mRANCHER_VERSION\e[0m[stable]="; read RANCHER_VERSION
     if [[ -z ${RANCHER_VERSION} ]]; then
-        error "Error while reading variables"
+        echo -n "stable"
+        RANCHER_VERSION="stable"
     fi
 }
 
