@@ -32,4 +32,4 @@
       mode: 0644
 
   - name: "Start Rancher Server"
-    command: "/rancher/deploy.sh"
+    command: "bash /rancher/deploy.sh"
