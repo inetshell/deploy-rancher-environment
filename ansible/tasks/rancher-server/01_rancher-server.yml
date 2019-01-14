@@ -1,0 +1,35 @@
+---
+- hosts: rancher-server
+  gather_facts: no
+  vars:
+    CERTBOT_EMAIL: "{{ lookup('env','CERTBOT_EMAIL') }}"
+    RANCHER_DNS: "{{ lookup('env','RANCHER_DNS') }}"
+    RANCHER_VERSION: "{{ lookup('env','RANCHER_VERSION') }}"
+  tasks:
+  - name: "Open Rancher ports"
+    firewalld:
+      port: "{{ item }}"
+      permanent: true
+      immediate: true
+      state: enabled
+    loop:
+      - '80/tcp'
+      - '443/tcp'
+
+  - name: "Clone deploy-rancher-server repo"
+    git:
+      repo: "https://github.com/inetshell/rancher-server.git"
+      dest: "/rancher"
+      force: yes
+    register: checkout
+
+  - name: "Write rancher-server vars_file.sh"
+    template:
+      src: "../../files/rancher-server/vars_file.j2"
+      dest: "/rancher/vars/load_vars.sh"
+      owner: root
+      group: wheel
+      mode: 0644
+
+  - name: "Start Rancher Server"
+    command: "/rancher/deploy.sh"

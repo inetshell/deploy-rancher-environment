@@ -1,0 +1,32 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: "Enable EPEL Repository"
+    yum:
+      name: epel-release
+      state: latest
+
+  - name: "Install security updates"
+    yum:
+      name: '*'
+      state: latest
+      update_cache: yes
+
+  - name: "Install system dependencies"
+    yum:
+      name: "{{ item }}"
+      state: latest
+    loop:
+      - firewalld
+      - rsync
+      - screen
+      - git
+
+  - name: "Enable and start system services"
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: yes
+    loop:
+      - firewalld

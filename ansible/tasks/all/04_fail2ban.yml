@@ -1,0 +1,27 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: "Install fail2ban"
+    yum:
+      name: fail2ban
+      state: latest
+
+  - name: "Enable fail2ban service"
+    service:
+      name: fail2ban
+      enabled: yes
+
+  - name: "Configure fail2ban"
+    copy:
+      src: "{{ item }}"
+      dest: "/etc/fail2ban/"
+      owner: root
+      mode: 0644
+    with_fileglob:
+      - "../../files/fail2ban/*"
+    notify: restart-fail2ban
+
+  handlers:
+    - name: restart-fail2ban
+      service: name=fail2ban state=restarted
