@@ -1,5 +1,5 @@
 ---
-- hosts: docker
+- hosts: rancher-server, rancher-nodes
   gather_facts: no
   tasks:
   - name: "Install Docker dependencies"

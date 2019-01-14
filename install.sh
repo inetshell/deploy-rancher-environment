@@ -58,10 +58,6 @@ cat > "${INVENTORY_FILE}" <<-EOM
 ansible_ssh_private_key_file=${SSH_KEY_FILE}
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-[docker]
-rancher-server
-rancher-nodes
-
 [rancher-server]
 ${RANCHER_DNS}
 
