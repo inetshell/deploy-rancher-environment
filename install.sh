@@ -30,3 +30,6 @@ else
 fi
 
 gather_ssh_keys_for_ansible
+
+echo  "\n\nPlease add the following SSH-KEY to the instances:"
+echo -e "\e[32m$(cat ${SSH_KEY_FILE}.pub)\e[0m"

@@ -64,9 +64,6 @@ function gen_ssh_keys() {
     mkdir -p "${SSH_KEY_PATH}"
     COMMENT="${RANCHER_DNS} $(date +"%F %T")"
     ssh-keygen -q -N '' -C "${COMMENT}" -t ecdsa -f "${SSH_KEY_FILE}"
-    echo -e "\e[36mPlease add the following SSH-KEY to the instances:\e[0m"
-    echo -e "\e[32m$(cat ${SSH_KEY_FILE}.pub)\e[0m"
-
 }
 
 function gather_ssh_keys_for_ansible() {
