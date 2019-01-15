@@ -7,16 +7,22 @@
     PASS: "{{ lookup('env','RANCHER_PASS') }}"
     CMD_FILE: "{{ lookup('env','RANCHER_CMD_FILE') }}"
   tasks:
-  - name: "Wait for Rancher Server to come up"
+  - name: "Check Rancher Server status"
     uri:
       url: "https://{{ URL }}"
-      status_code: 200
+    register: rancher
+
+  - name: "Wait for Rancher Server to come up"
+    when: rancher.status == 502
+    uri:
+      url: "https://{{ URL }}"
     register: result
     until: result.status == 200
     retries: 30
     delay: 5
 
   - name: "Set Rancher registration URL"
+    when: rancher.status == 200
     uri:
       url: "https://{{ URL }}/v1/settings/api.host"
       method: PUT
@@ -26,6 +32,7 @@
       body_format: json
 
   - name: "Get Rancher registration command"
+    when: rancher.status == 200
     uri:
       url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
       method: GET
@@ -33,8 +40,13 @@
       return_content: yes
     register: json_response
 
-  - name: "Save Rancher registration command"
+  - name: "Write Rancher registration command to file"
+    when: json_response
     local_action: shell echo "{{ (json_response.content|from_json)["data"][0]["command"] }}" > "{{ CMD_FILE }}"
+
+  - name: "Set Rancher admin password"
+    when: rancher.status == 200
+    uri:
       url: "https://{{ URL }}/v1/password"
       method: POST
       status_code: 201
@@ -43,6 +55,7 @@
       body_format: json
 
   - name: "Enable Rancher local authentication"
+    when: rancher.status == 200
     uri:
       url: "https://{{ URL }}/v1/localauthconfig"
       method: POST
