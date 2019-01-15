@@ -12,9 +12,9 @@ function install_requirements() {
 }
 
 function define_vars() {
-    echo "Please define the environment variables, Press ENTER for default:"
+    echo "Please define the environment variables, Press ENTER for default:\n\n"
 
-    echo -n -e "\e[32mCERTBOT_EMAIL\e[0m[No default]:\n"; read CERTBOT_EMAIL
+    echo -n -e "\e[32mCERTBOT_EMAIL\e[0m[No default]:"; read CERTBOT_EMAIL
     if [[ -z ${CERTBOT_EMAIL} ]]; then
         error "CERTBOT_EMAIL must be defined"
     fi
