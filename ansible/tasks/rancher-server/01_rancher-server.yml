@@ -21,7 +21,6 @@
       repo: "https://github.com/inetshell/rancher-server.git"
       dest: "/rancher"
       force: yes
-    notify: restart-rancher-server
 
   - name: "Write rancher-server vars_file.sh"
     template:
@@ -31,8 +30,7 @@
       group: wheel
       mode: 0644
 
-  handlers:
-    - name: restart-rancher-server
-      command: "bash /rancher/deploy.sh"
-      args:
-        chdir: "/rancher/"
+  - name: "Start Rancher Server"
+    command: "bash /rancher/deploy.sh"
+    args:
+      chdir: "/rancher/"
