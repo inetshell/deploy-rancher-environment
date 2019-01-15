@@ -12,7 +12,7 @@ function install_requirements() {
 }
 
 function define_vars() {
-    echo "Please define the environment variables, Press ENTER for default:\n\n"
+    echo "Please define the environment variables, Press ENTER for default:"
 
     echo -n -e "\e[32mCERTBOT_EMAIL\e[0m[No default]:"; read CERTBOT_EMAIL
     if [[ -z ${CERTBOT_EMAIL} ]]; then
@@ -83,4 +83,8 @@ function gen_rancher_password() {
         echo "Generating Rancher admin password to ${RANCHER_PASS_FILE}"
         gen_password 50 > "${RANCHER_PASS_FILE}"
     fi
+}
+
+function new_section() {
+    echo -e "\n========================================================"
 }
