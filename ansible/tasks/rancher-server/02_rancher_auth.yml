@@ -10,10 +10,11 @@
   - name: "Check Rancher Server status"
     uri:
       url: "https://{{ URL }}"
-    register: rancher
+      status_code: 200, 401, 502
+    register: rancher_probe
 
   - name: "Wait for Rancher Server to come up"
-    when: rancher.status == 502
+    when: rancher_probe.status == 502
     uri:
       url: "https://{{ URL }}"
     register: result
@@ -22,7 +23,7 @@
     delay: 5
 
   - name: "Set Rancher registration URL"
-    when: rancher.status == 200
+    when: rancher_probe.status == 200
     uri:
       url: "https://{{ URL }}/v1/settings/api.host"
       method: PUT
@@ -31,8 +32,19 @@
       body: {"activeValue":"", "id":"api.host", "name":"api.host", "source":"Database", "value":"https://{{ URL }}"}
       body_format: json
 
+  - name: "Create Rancher registration token"
+    when: rancher_probe.status == 200
+    uri:
+      url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
+      method: POST
+      status_code: 201
+      return_content: yes
+      body: {"description":"Rancher default environment", "name":"rancher_environment"}
+      body_format: json
+    register: html_out
+
   - name: "Get Rancher registration command"
-    when: rancher.status == 200
+    when: rancher_probe.status == 200
     uri:
       url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
       method: GET
@@ -41,11 +53,11 @@
     register: json_response
 
   - name: "Write Rancher registration command to file"
-    when: json_response is defined
+    when: rancher_probe.status == 200
     local_action: shell echo "{{ (json_response.content|from_json)["data"][0]["command"] }}" > "{{ CMD_FILE }}"
 
   - name: "Set Rancher admin password"
-    when: rancher.status == 200
+    when: rancher_probe.status == 200
     uri:
       url: "https://{{ URL }}/v1/password"
       method: POST
@@ -55,7 +67,7 @@
       body_format: json
 
   - name: "Enable Rancher local authentication"
-    when: rancher.status == 200
+    when: rancher_probe.status == 200
     uri:
       url: "https://{{ URL }}/v1/localauthconfig"
       method: POST
@@ -65,6 +77,7 @@
       body_format: json
 
   - name: "Test if Rancher local authentication is enabled"
+    until: result.status == 200
     uri:
       url: "https://{{ URL }}"
       status_code: 401

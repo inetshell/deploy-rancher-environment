@@ -19,10 +19,10 @@ ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/rancher-server/*.yml || er
 new_section
 echo -e "\e[32mFINISHED!\e[0m"
 echo "You can access Rancher server using the following credentials"
-echo "URL: ${RANCHER_DNS}"
+echo "URL: https://${RANCHER_DNS}"
 echo "Username: admin"
 echo "Password: ${RANCHER_PASS}"
 
 new_section
 echo "To add a host into the Rancher environment, execute the following command in every rancher agent node:"
-echo "$(cat ${RANCHER_COMMAND_FILE})"
+echo "$(cat ${RANCHER_CMD_FILE})"
