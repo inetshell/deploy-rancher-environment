@@ -1,5 +1,6 @@
-ansible/*.retry
+ansible/**/*.retry
 secrets/
 secrets/ssh/
 secrets/rancher/
 vars/
+
