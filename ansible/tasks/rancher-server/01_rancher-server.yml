@@ -34,5 +34,5 @@
   handlers:
     - name: restart-rancher-server
       command: "bash /rancher/deploy.sh"
-        args:
-          chdir: "/rancher/"
+      args:
+        chdir: "/rancher/"

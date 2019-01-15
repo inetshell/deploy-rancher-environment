@@ -1,0 +1,58 @@
+---
+- hosts: rancher-server
+  gather_facts: no
+  vars:
+    URL: "{{ lookup('env','RANCHER_DNS') }}"
+    USER: "{{ lookup('env','RANCHER_USER') }}"
+    PASS: "{{ lookup('env','RANCHER_PASS') }}"
+    CMD_FILE: "{{ lookup('env','RANCHER_CMD_FILE') }}"
+  tasks:
+  - name: "Wait for Rancher Server to come up"
+    uri:
+      url: "https://{{ URL }}"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 30
+    delay: 5
+
+  - name: "Set Rancher registration URL"
+    uri:
+      url: "https://{{ URL }}/v1/settings/api.host"
+      method: PUT
+      status_code: 200
+      return_content: yes
+      body: {"activeValue":"", "id":"api.host", "name":"api.host", "source":"Database", "value":"https://{{ URL }}"}
+      body_format: json
+
+  - name: "Get Rancher registration command"
+    uri:
+      url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
+      method: GET
+      status_code: 200
+      return_content: yes
+    register: json_response
+
+  - name: "Save Rancher registration command"
+    local_action: shell echo "{{ (json_response.content|from_json)["data"][0]["command"] }}" > "{{ CMD_FILE }}"
+      url: "https://{{ URL }}/v1/password"
+      method: POST
+      status_code: 201
+      return_content: yes
+      body: {"publicValue":"{{ USER }}","secretValue":"{{ PASS }}","accountId":"1a1"}
+      body_format: json
+
+  - name: "Enable Rancher local authentication"
+    uri:
+      url: "https://{{ URL }}/v1/localauthconfig"
+      method: POST
+      status_code: 201
+      return_content: yes
+      body: {"accessMode":"required","enabled":"true","name":"{{ USER }}","username":"{{ USER }}","password":"{{ PASS }}"}
+      body_format: json
+
+  - name: "Test if Rancher local authentication is enabled"
+    uri:
+      url: "https://{{ URL }}"
+      status_code: 401
+      return_content: yes
