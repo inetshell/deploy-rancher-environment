@@ -41,7 +41,7 @@
     register: json_response
 
   - name: "Write Rancher registration command to file"
-    when: json_response
+    when: json_response is defined
     local_action: shell echo "{{ (json_response.content|from_json)["data"][0]["command"] }}" > "{{ CMD_FILE }}"
 
   - name: "Set Rancher admin password"
