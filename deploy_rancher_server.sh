@@ -12,9 +12,9 @@ export RANCHER_PASS=$(cat ${RANCHER_PASS_FILE})
 
 new_section
 echo "Execute Ansible playbooks for Rancher-Server"
-ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/all/*.yml
-ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/docker/*.yml
-ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/rancher-server/*.yml
+ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/all/*.yml || error "Error during ansible execution"
+ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/docker/*.yml || error "Error during ansible execution"
+ansible-playbook -i "${INVENTORY_FILE}" ansible/tasks/rancher-server/*.yml || error "Error during ansible execution"
 
 new_section
 echo -e "\e[32mFINISHED!\e[0m"
