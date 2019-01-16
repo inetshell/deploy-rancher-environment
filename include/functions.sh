@@ -94,3 +94,9 @@ function gen_rancher_password() {
 function new_section() {
     echo -e "\n========================================================"
 }
+
+function run_ansible() {
+    LIMIT="${1}"
+    PLAYBOOK="${2}"
+    ansible-playbook -i "${INVENTORY_FILE}" --limit "${LIMIT}" ${PLAYBOOK} || error "Error during ansible execution"
+}
