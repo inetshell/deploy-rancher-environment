@@ -1,0 +1,17 @@
+---
+- hosts: rancher-nodes
+  gather_facts: no
+  vars:
+    CMD_FILE: "{{ lookup('env','RANCHER_CMD_FILE') }}"
+  tasks:
+  - name: "Open Rancher ports"
+    firewalld:
+      port: "{{ item }}"
+      permanent: true
+      immediate: true
+      state: enabled
+    loop:
+      - '1-65535/tcp'
+      - '1-65535/udp'
+
+  - debug: msg: "{{ CMD_FILE }}"
