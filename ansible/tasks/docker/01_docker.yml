@@ -4,15 +4,14 @@
   tasks:
   - name: "Install Docker dependencies"
     yum:
-      name: "{{ item }}"
+      name:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - python2-pip
+        - yum-plugin-versionlock
+        - docker-compose
       state: latest
-    loop:
-      - yum-utils
-      - device-mapper-persistent-data
-      - lvm2
-      - python2-pip
-      - yum-plugin-versionlock
-      - docker-compose
 
   - name: "Add Docker CE repo"
     get_url:
