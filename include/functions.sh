@@ -69,7 +69,7 @@ function gen_ssh_keys() {
     echo "Generating SSH key in ${SSH_KEY_FILE}"
     mkdir -p "${SSH_KEY_PATH}"
     COMMENT="${RANCHER_DNS} $(date +"%F %T")"
-    ssh-keygen -q -N '' -C "${COMMENT}" -t ecdsa -f "${SSH_KEY_FILE}"
+    ssh-keygen -q -N '' -C "${COMMENT}" -t "${SSH_KEY_TYPE}" -f "${SSH_KEY_FILE}"
 }
 
 function gather_ssh_keys_for_ansible() {
