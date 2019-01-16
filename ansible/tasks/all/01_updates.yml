@@ -15,13 +15,13 @@
 
   - name: "Install system dependencies"
     yum:
-      name: "{{ item }}"
+      name:
+        - firewalld
+        - rsync
+        - screen
+        - git
       state: latest
-    loop:
-      - firewalld
-      - rsync
-      - screen
-      - git
+
 
   - name: "Enable and start system services"
     service:

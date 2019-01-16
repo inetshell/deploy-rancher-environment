@@ -14,4 +14,4 @@
       - '1-65535/tcp'
       - '1-65535/udp'
 
-  - debug: msg: "{{ CMD_FILE }}"
+  - debug: msg="{{ CMD_FILE }}"
