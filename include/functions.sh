@@ -33,6 +33,11 @@ function define_vars() {
     if [[ -z ${TIMEZONE} ]]; then
         TIMEZONE="UTC"
     fi
+
+    echo -n -e "\e[32mSSH_KEY_TYPE\e[0m[RSA]:"; read SSH_KEY_TYPE
+    if [[ -z ${SSH_KEY_TYPE} ]]; then
+        SSH_KEY_TYPE="RSA"
+    fi
 }
 
 function write_vars_file() {
@@ -42,6 +47,7 @@ export CERTBOT_EMAIL="${CERTBOT_EMAIL}"
 export RANCHER_DNS="${RANCHER_DNS}"
 export RANCHER_VERSION="${RANCHER_VERSION}"
 export TIMEZONE="${TIMEZONE}"
+export SSH_KEY_TYPE="${SSH_KEY_TYPE}"
 EOM
 }
 
