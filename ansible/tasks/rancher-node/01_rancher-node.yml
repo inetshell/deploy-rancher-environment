@@ -3,6 +3,7 @@
   gather_facts: no
   vars:
     CMD_FILE: "{{ lookup('env','RANCHER_CMD_FILE') }}"
+    COMMAND: "{{ lookup('file', CMD_FILE ) }}"
   tasks:
   - name: "Open Rancher ports"
     firewalld:
@@ -14,4 +15,8 @@
       - '1-65535/tcp'
       - '1-65535/udp'
 
-  - debug: msg="{{ CMD_FILE }}"
+  - debug: msg="{{ COMMAND }}"
+
+  - name: "Start Rancher Server"
+    command: "{{ COMMAND }}"
+
