@@ -7,23 +7,17 @@
     PASS: "{{ lookup('env','RANCHER_PASS') }}"
     CMD_FILE: "{{ lookup('env','RANCHER_CMD_FILE') }}"
   tasks:
-  - name: "Check Rancher Server status"
+  - name: "Wait for Rancher Server to come up"
     uri:
       url: "https://{{ URL }}"
       status_code: 200, 401, 502
-    register: rancher_probe
-
-  - name: "Wait for Rancher Server to come up"
-    when: rancher_probe.status == 502
-    uri:
-      url: "https://{{ URL }}"
     register: result
-    until: result.status == 200
+    until: "result.status == 200 or result.status == 401"
     retries: 30
     delay: 5
 
   - name: "Set Rancher registration URL"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     uri:
       url: "https://{{ URL }}/v1/settings/api.host"
       method: PUT
@@ -33,7 +27,7 @@
       body_format: json
 
   - name: "Create Rancher registration token"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     uri:
       url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
       method: POST
@@ -44,7 +38,7 @@
     register: html_out
 
   - name: "Get Rancher registration command"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     uri:
       url: "https://{{ URL }}/v1/projects/1a5/registrationtokens"
       method: GET
@@ -53,11 +47,11 @@
     register: json_response
 
   - name: "Write Rancher registration command to file"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     local_action: shell echo "{{ (json_response.content|from_json)["data"][0]["command"] }}" > "{{ CMD_FILE }}"
 
   - name: "Set Rancher admin password"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     uri:
       url: "https://{{ URL }}/v1/password"
       method: POST
@@ -67,7 +61,7 @@
       body_format: json
 
   - name: "Enable Rancher local authentication"
-    when: rancher_probe.status == 200
+    when: result.status == 200
     uri:
       url: "https://{{ URL }}/v1/localauthconfig"
       method: POST
@@ -77,7 +71,6 @@
       body_format: json
 
   - name: "Test if Rancher local authentication is enabled"
-    until: result.status == 200
     uri:
       url: "https://{{ URL }}"
       status_code: 401
